@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+    environment {
+        GITHUB_PAT = credentials('multibranch-pat')  // Use your GitHub PAT from Jenkins credentials
+    }
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', credentialsId: 'multibranch-pat', url: 'https://github.com/your-username/your-repo.git'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'  // Example: if using Node.js
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh 'npm test'  // Example: run tests
+            }
+        }
+        stage('Build Project') {
+            steps {
+                sh 'npm run build'  // Example: build project
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying to the environment...'
+                // Deployment steps go here (e.g., copying files to a server)
+            }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline execution finished.'
+        }
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Pipeline failed. Investigate the issue.'
+        }
+    }
+}
